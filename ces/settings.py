@@ -53,6 +53,10 @@ INSTALLED_APPS = [
     'django_filters',
     'import_export',
     'drf_spectacular',
+
+    # APPS
+    'comum',
+    'core'
 ]
 
 MIDDLEWARE = [
