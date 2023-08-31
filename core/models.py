@@ -18,7 +18,7 @@ class Coordenadoria(ModeloIdNome):
 
     class Meta:
         verbose_name = 'coordenadoria'
-        verbose_name_plural = 'Coordenadoria'
+        verbose_name_plural = 'Coordenadorias'
 
 
 class Sistema(ModeloIdNome):

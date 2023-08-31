@@ -117,6 +117,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 6,
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -176,4 +179,22 @@ REST_FRAMEWORK = {
 
 LOGIN_REDIRECT_URL = '/admin/'
 
+LOGIN_URL = '/admin/login'
+
 AUTH_USER_MODEL = 'usuario.Usuario'
+
+# Email
+# https://docs.djangoproject.com/en/4.2/topics/email/
+
+EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
+EMAIL_HOST = env('EMAIL_HOST', default='')
+EMAIL_PORT = env('EMAIL_PORT', default='')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
+EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=False)
+EMAIL_USE_SSL = env.bool('EMAIL_USE_SSL', default=False)
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST
+
+
+ADMIN_URL = env('ADMIN_URL', default='http://localhost:8000')
