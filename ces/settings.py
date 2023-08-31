@@ -53,10 +53,13 @@ INSTALLED_APPS = [
     'django_filters',
     'import_export',
     'drf_spectacular',
+    'django_admin_listfilter_dropdown',
+    'rangefilter',
 
     # APPS
     'comum',
-    'core'
+    'core',
+    'usuario'
 ]
 
 MIDDLEWARE = [
@@ -172,3 +175,5 @@ REST_FRAMEWORK = {
 }
 
 LOGIN_REDIRECT_URL = '/admin/'
+
+AUTH_USER_MODEL = 'usuario.Usuario'
