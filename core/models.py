@@ -1,5 +1,5 @@
-import uuid
 from django.db import models
+from django.utils.text import slugify
 from auditlog.models import AuditlogHistoryField
 from auditlog.registry import auditlog
 
@@ -29,33 +29,11 @@ class Sistema(ModeloIdNome):
 
     class Meta:
         verbose_name = "Sistema"
-        verbose_name_plural = "Sistema"
+        verbose_name_plural = "Sistemas"
 
 
-class Modulo(ModeloIdNome):
-    history = AuditlogHistoryField()
-
-    sistema = models.ForeignKey(
-        'Sistema', on_delete=models.CASCADE, related_name="modulos", null=False)
-
-    class Meta:
-        verbose_name = "Modulo"
-        verbose_name_plural = "Modulo"
-
-
-class SubModulo(ModeloIdNome):
-    history = AuditlogHistoryField()
-
-    modulo = models.ForeignKey(
-        'Modulo', on_delete=models.CASCADE, related_name="submodulos", null=False)
-
-    class Meta:
-        verbose_name = "SubModulo"
-        verbose_name_plural = "SubModulo"
-
-
-class Recurso(ModeloIdNome):
-    '''Classe que representa os recursos do sistema, taís como rotas de backend ou rotas de navegação de frontend'''
+class Acao(ModeloIdNome):
+    '''Classe que representa as acoes do sistema'''
 
     METODO_REQUISICAO_GET = 'GET'
     METODO_REQUISICAO_POST = 'POST'
@@ -84,10 +62,10 @@ class Recurso(ModeloIdNome):
 
     sistema = models.ForeignKey(
         'Sistema', on_delete=models.CASCADE, related_name="recursos", blank=True, null=True)
-    modulo = models.ForeignKey(
-        'Modulo', on_delete=models.CASCADE, related_name="recursos_modulo", blank=True, null=True)
-    submodulo = models.ForeignKey(
-        'SubModulo', on_delete=models.CASCADE, related_name="recursos_submodulo", blank=True, null=True)
+    modulo = models.CharField(
+        "Modulo", max_length=255, blank=True, null=True)
+    submodulo = models.CharField(
+        "SubModulo", max_length=255, blank=True, null=True)
 
     rota = models.CharField('Rota', max_length=320)
     metodo_requisicao = models.CharField(
@@ -99,11 +77,18 @@ class Recurso(ModeloIdNome):
     )
 
     class Meta:
-        verbose_name = "Recurso"
-        verbose_name_plural = "Recurso"
+        verbose_name = "Ação do sistema"
+        verbose_name_plural = "Ações do sistema"
+
+    def save(self, *args, **kwargs):
+        if self.modulo:
+            self.modulo = slugify(self.modulo)
+
+        if self.submodulo:
+            self.submodulo = slugify(self.submodulo)
+
+        super(Acao, self).save(*args, **kwargs)
 
 
 auditlog.register(Sistema)
-auditlog.register(Modulo)
-auditlog.register(SubModulo)
-auditlog.register(Recurso)
+auditlog.register(Acao)
