@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'django_admin_listfilter_dropdown',
     'rangefilter',
+    'admin_reorder',
 
     # APPS
     'comum',
@@ -71,6 +72,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'admin_reorder.middleware.ModelAdminReorder',
 ]
 
 ROOT_URLCONF = 'ces.urls'
@@ -199,3 +201,10 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST
 
 
 ADMIN_URL = env('ADMIN_URL', default='http://localhost:8000')
+
+
+ADMIN_REORDER = (
+    'usuario',
+    {'app': 'core', 'models': ('core.Coordenadoria', 'core.Sistema', 'core.Acao', 'pesquisa.Pesquisa')},
+    'auditlog'
+)

@@ -37,13 +37,15 @@ def setup_grupos_e_permissoes():
         '_sistema': ALL,
         '_acao': ALL,
         '_usuario': ALL,
+        '_pesquisa': ALL
     }
     atribuir_permissao(coordenador, coordenador_settings)
 
     po, _ = Group.objects.get_or_create(name=GRUPO_NIVEL_PO)
     po_settings = {
         '_acao': ALL,
-        '_sistema': ['view']
+        '_sistema': ['view'],
+        '_pesquisa': ALL
     }
     atribuir_permissao(po, po_settings)
 

@@ -14,7 +14,7 @@ class Coordenadoria(ModeloIdNome):
     sigla = models.CharField("sigla", max_length=255, null=False, blank=False)
 
     def __str__(self):
-        return '{} - {}'.format(self.codigo, self.sigla)
+        return self.nome
 
     class Meta:
         verbose_name = 'coordenadoria'

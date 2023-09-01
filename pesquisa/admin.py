@@ -9,16 +9,21 @@ from core.models import Acao
 @admin.register(Pesquisa)
 class PesquisaAdmin(admin.ModelAdmin):
     model = Pesquisa
-    list_display = ('uuid', 'ativa', 'acao', 'afirmacao', 'alterado_em', )
+    list_display = ('uuid', 'ativa', 'sistema', 'acao', 'criado_em', 'alterado_em', )
     readonly_fields = ('uuid', 'id', 'criado_em', 'alterado_em')
+    search_fields = ('uuid', 'nome', 'acao__sistema__nome', 'acao__sistema_coordenadoria__nome')
+    search_help_text = 'Pesquise por uuid, nome, sistema ou coordenadoria.'
     raw_id_fields = ('acao', )
 
     list_filter = (
-        ('acao__sistema__nome', DropdownFilter),
-        ('acao__sistema__coordenadoria__nome', DropdownFilter),
+        # ('acao__sistema__nome', DropdownFilter),
+        # ('acao__sistema__coordenadoria__nome', DropdownFilter),
         ('criado_em', DateRangeFilter),
         'ativa'
     )
+
+    def sistema(self, obj):
+        return obj.acao.sistema.nome
 
     def get_queryset(self, request):
         user = request.user
@@ -26,7 +31,7 @@ class PesquisaAdmin(admin.ModelAdmin):
         if user.is_po:
             return Pesquisa.objects.filter(acao__sistema=user.sistema.id)
         if user.is_coordenador:
-            return Pesquisa.objects.filter(acao__sistema__coordenaria=user.sistema.coordenadoria)
+            return Pesquisa.objects.filter(acao__sistema__coordenadoria=user.coordenadoria)
 
         return Pesquisa.objects.all()
 
