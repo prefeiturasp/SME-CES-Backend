@@ -35,7 +35,8 @@ class UsuarioAdmin(UserAdmin):
         user = request.user
 
         if user.is_coordenador:
-            return Usuario.objects.filter(coordenadoria=user.coordenadoria)
+            return Usuario.objects.filter(coordenadoria__isnull=False,
+                                          coordenadoria=user.coordenadoria)
         return Usuario.objects.all()
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):

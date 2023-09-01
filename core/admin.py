@@ -15,12 +15,13 @@ class CoordenadoriaAdmin(admin.ModelAdmin):
 class AcaoAdmin(admin.ModelAdmin):
 
     list_display = ('nome', 'sistema', 'rota',  'modulo', 'submodulo', 'alterado_em', )
-    search_fields = ('uuid', 'nome', 'sistema__nome')
     readonly_fields = ('uuid', 'id', 'criado_em', 'alterado_em')
+    search_fields = ('uuid', 'nome', 'sistema__nome', 'sistema__coordenadoria__nome')
+    search_help_text = 'Pesquise por uuid, nome, sistema ou coordenadoria.'
     raw_id_fields = ('sistema', )
 
     list_filter = (
-        ('sistema__nome', DropdownFilter),
+        # ('sistema__nome', DropdownFilter),
         ('criado_em', DateRangeFilter),
     )
 
@@ -67,7 +68,7 @@ class SistemaAdmin(admin.ModelAdmin):
         if user.is_po:
             return Sistema.objects.filter(id=user.sistema.id)
         if user.is_coordenador:
-            return Sistema.objects.filter(coordenadoria__in=user.coordenadoria__in)
+            return Sistema.objects.filter(coordenadoria=user.coordenadoria)
         return Sistema.objects.all()
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
