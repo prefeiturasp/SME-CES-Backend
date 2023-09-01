@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
+from rest_framework.authtoken.models import TokenProxy
 from usuario.models import Usuario
 from core.models import Coordenadoria
 
@@ -48,3 +49,4 @@ class UsuarioAdmin(UserAdmin):
 
 admin.site.register(Usuario, UsuarioAdmin)
 admin.site.unregister(Group)
+admin.site.unregister(TokenProxy)

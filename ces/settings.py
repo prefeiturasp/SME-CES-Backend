@@ -59,7 +59,8 @@ INSTALLED_APPS = [
     # APPS
     'comum',
     'core',
-    'usuario'
+    'usuario',
+    'pesquisa'
 ]
 
 MIDDLEWARE = [
