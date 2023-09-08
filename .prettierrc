@@ -1,0 +1,13 @@
+{
+  "printWidth": 80, // Specify the line width (number of characters per line)
+  "tabWidth": 2, // Specify the number of spaces per indentation level
+  "useTabs": false, // Use spaces instead of tabs for indentation
+  "singleQuote": true, // Use single quotes for attribute values
+  "semi": false, // Do not add semicolons at the end of statements
+  "htmlWhitespaceSensitivity": "css", // Define how to handle HTML whitespace
+  "jsxSingleQuote": false, // Do not use single quotes in JSX
+  "trailingComma": "none", // Specify whether to add trailing commas
+  "bracketSpacing": true, // Use spaces in object literals
+  "jsxBracketSameLine": false, // Place the closing bracket of JSX elements on a new line
+  "arrowParens": "avoid" // Omit parentheses when possible for arrow functions
+}

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <title>CES</title>
+    <style>
+      body {
+        font-family: Roboto, Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;        
+      }
+
+      .centered-div {
+        padding: 20px;
+        border: 1px solid #ccc;
+      }
+
+      .header {
+        margin-bottom: 20px;
+      }
+
+      .header img {
+        max-width: 170px;
+        margin-right: 20px;
+      }
+
+      .title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #198459;
+      }
+
+      .subtitle {
+        font-size: 16px;
+        color: #777;
+      }
+
+      .text {
+        margin-bottom: 20px;
+      }
+
+      .radio-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 20px;
+      }
+
+      .radio-group label {
+        margin-bottom: 10px;
+        border: 1px solid #A0A3A1;
+        border-radius: 4px;
+        padding: 6px;        
+      }
+
+      .buttons {
+        display: flex;
+        justify-content: flex-start;
+      }
+
+      .button {
+        padding: 10px 20px;
+        background-color: #198459;
+        color: #fff;
+        text-align: center;
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+      }
+
+      .button:hover {
+        background-color: #0e6f48;
+      }
+
+      .button-outlined {
+        margin-left: 12px;
+        padding: 10px 20px;
+        border: 1px solid #198459;
+        background-color: transparent;
+        color: #198459;
+        text-align: center;
+        cursor: pointer;
+        border-radius: 5px;
+      }   
+
+      input[type=radio] {
+        accent-color: #198459;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="centered-div">
+        <div class="header">
+          {% block branding %}
+            {% load static %}
+            <img src="{% static 'ces.png' %}" alt="Imagem CES" />
+          {% endblock %}
+          <div>
+            <div class="title">Olá, queremos ouvir você!</div>
+            <div class="subtitle">
+              Fique tranquilo(a), sua resposta será anônima. 😉
+            </div>
+          </div>
+        </div>
+        <div class="text">
+          <p>Sendo sincero(a), o quanto você concorda com a afirmação abaixo:</p>
+          <p>{{ afirmacao }}</p>
+        </div>
+        <div class="radio-group">
+          <label><input type="radio" name="opcao" value="0" class="custom-radio"/> Concordo totalmente</label>
+          <label><input type="radio" name="opcao" value="1" class="custom-radio"/> Concordo parcialmente</label>
+          <label><input type="radio" name="opcao" value="2" class="custom-radio"/> Não concordo e nem discordo</label>
+          <label><input type="radio" name="opcao" value="3" class="custom-radio"/> Discordo parcialmente</label>
+          <label><input type="radio" name="opcao" value="4" class="custom-radio"/> Discordo totalmente</label>
+        </div>
+        <div class="buttons">
+          <button class="button">Enviar resposta</button>
+          <button class="button-outlined">Responder depois</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
