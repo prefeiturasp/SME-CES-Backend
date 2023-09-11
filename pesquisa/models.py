@@ -2,11 +2,10 @@ from django.db import models
 from auditlog.models import AuditlogHistoryField
 from auditlog.registry import auditlog
 
-from comum.models import ModeloIdNome
+from comum.models import ModeloBase
 
 
-class Pesquisa(ModeloIdNome):
-    '''Classe que representa uma pesquisa'''
+class Pesquisa(ModeloBase):
 
     history = AuditlogHistoryField()
 
@@ -25,4 +24,22 @@ class Pesquisa(ModeloIdNome):
         verbose_name_plural = 'Pesquisas'
 
 
+class Resposta(ModeloBase):
+
+    history = AuditlogHistoryField()
+
+    pesquisa = models.ForeignKey(
+        'Pesquisa', on_delete=models.PROTECT, related_name="respostas", blank=True, null=True)
+    usuario = models.ForeignKey(
+        'usuario.Usuario', on_delete=models.PROTECT, blank=True, null=True
+    )
+    nota = models.PositiveIntegerField('Nota', blank=True, null=True)
+    quantidade_pulos = models.PositiveIntegerField('Quantidade de pulos', help_text='Quantidade de vezes em que o usuário pulou a pesquisa.', default=0)
+
+    class Meta:
+        verbose_name = 'Resposta'
+        verbose_name_plural = 'Respostas'
+
+
 auditlog.register(Pesquisa)
+auditlog.register(Resposta)

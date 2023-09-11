@@ -3,9 +3,9 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, Group
 from django.dispatch import receiver
 from django.db.models.signals import post_save
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
+
+from rest_framework.authtoken.models import Token
+
 from auditlog.models import AuditlogHistoryField
 from auditlog.registry import auditlog
 
@@ -46,13 +46,17 @@ class Usuario(AbstractUser):
     def enviar_email_redefinicao_senha(self):
         envia_email_novo_usuario(self)
 
+    def atribui_token(self):
+        Token.objects.get_or_create(user=self)
+
 
 @receiver(post_save, sender=Usuario)
-def adiciona_grupo(sender, instance, created, **kwargs):
+def apos_criar_usuario(sender, instance, created, **kwargs):
     if created:
-        instance.enviar_email_redefinicao_senha()
-        instance.is_staff = True
-        instance.save()
+        if instance.is_staff:
+            instance.enviar_email_redefinicao_senha()
+        else:
+            instance.atribui_token()
     if instance.sistema is not None:
         instance.groups.add(Usuario.get_grupo_po())
     elif instance.coordenadoria is not None:

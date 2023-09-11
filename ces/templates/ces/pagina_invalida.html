@@ -39,25 +39,19 @@
 
       .title {
         font-size: 24px;
-        font-weight: bold;
+        font-weight: 600;
         color: #198459;
+        margin: 8px 0;
+      }
+
+      .subtitle {
+        font-size: 16px;
+        font-weight: 400;
+        color: #42474A;
       }
 
       .text {
         margin-bottom: 20px;
-      }
-
-      .input-comentario {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 20px;
-      }
-
-      .input-comentario textarea {
-        margin-bottom: 10px;
-        border: 1px solid #A0A3A1;
-        border-radius: 4px;
-        padding: 6px;
       }
 
       .buttons {
@@ -78,47 +72,20 @@
       .button:hover {
         background-color: #0e6f48;
       }
-
-      .button-outlined {
-        margin-left: 12px;
-        padding: 10px 20px;
-        border: 1px solid #198459;
-        background-color: transparent;
-        color: #198459;
-        text-align: center;
-        cursor: pointer;
-        border-radius: 5px;
-      }   
     </style>
   </head>
   <body>
     <div class="container">
       <div class="centered-div">
         <div class="header">
-          {% block branding %}
-            {% load static %}
-            <img src="{% static 'ces_comentario.png' %}" alt="Imagem CES" />
-          {% endblock %}
           <div>
-            <div class="title">Obrigado pelo seu tempo!</div>
+            <div class="title">Requisição inválida</div>
+            <div class="subtitle">
+              Não foi possível retornar pesquisa.
+            </div>
           </div>
-        </div>
-        <div class="text">
-          <p>Se quiser, deixe seu comentário sobre a sua experiência com a funcionalidade.</p>
-        </div>
-        <div class="input-comentario">
-          <textarea name="comentario" rows="5" placeholder="Comentar..."></textarea>
-        </div>
-        <div class="buttons">
-          <button class="button">Enviar comentário</button>
-          <button class="button-outlined" id="closeButton">Apenas fechar</button>
         </div>
       </div>
     </div>
   </body>
 </html>
-<script>
-  document.getElementById('closeButton').addEventListener('click', function () {
-      window.close();
-  });
-</script>

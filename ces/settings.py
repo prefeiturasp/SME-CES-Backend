@@ -169,7 +169,7 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'CES',
     'DESCRIPTION': 'API para projeto CES',
     'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': True,
+    'SERVE_INCLUDE_SCHEMA': False,
     'CACHE_ENABLED': False,
 }
 
@@ -178,6 +178,9 @@ SPECTACULAR_SETTINGS = {
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
 }
 
 LOGIN_REDIRECT_URL = '/admin/'
@@ -201,6 +204,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST
 
 
 ADMIN_URL = env('ADMIN_URL', default='http://localhost:8000')
+DOMAIN_URL = env('DOMAIN_URL', default='http://localhost:8000')
 
 
 ADMIN_REORDER = (

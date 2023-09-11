@@ -90,9 +90,15 @@
           </div>
         </div>
         <div class="buttons">
-          <button class="button">Fechar</button>
+          <button class="button" id="closeButton">Fechar</button>
         </div>
       </div>
     </div>
   </body>
 </html>
+
+<script>
+  document.getElementById('closeButton').addEventListener('click', function () {
+      window.close();
+  });
+</script>
