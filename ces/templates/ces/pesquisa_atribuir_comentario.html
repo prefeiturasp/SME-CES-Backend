@@ -94,25 +94,28 @@
   <body>
     <div class="container">
       <div class="centered-div">
-        <div class="header">
-          {% block branding %}
-            {% load static %}
-            <img src="{% static 'ces_comentario.png' %}" alt="Imagem CES" />
-          {% endblock %}
-          <div>
-            <div class="title">Obrigado pelo seu tempo!</div>
+        <form  action="{% url 'atribuir_comentario' %}" method="POST">
+          {% csrf_token %}
+          <div class="header">
+            {% block branding %}
+              {% load static %}
+              <img src="{% static 'ces_comentario.png' %}" alt="Imagem CES" />
+            {% endblock %}
+            <div>
+              <div class="title">Obrigado pelo seu tempo!</div>
+            </div>
           </div>
-        </div>
-        <div class="text">
-          <p>Se quiser, deixe seu comentário sobre a sua experiência com a funcionalidade.</p>
-        </div>
-        <div class="input-comentario">
-          <textarea name="comentario" rows="5" placeholder="Comentar..."></textarea>
-        </div>
-        <div class="buttons">
-          <button class="button">Enviar comentário</button>
-          <button class="button-outlined" id="closeButton">Apenas fechar</button>
-        </div>
+          <div class="text">
+            <p>Se quiser, deixe seu comentário sobre a sua experiência com a funcionalidade.</p>
+          </div>
+          <div class="input-comentario">
+            <textarea name="comentario" rows="5" placeholder="Comentar..."></textarea>
+          </div>
+          <div class="buttons">
+            <button type="submit" class="button">Enviar comentário</button>
+            <button class="button-outlined" id="closeButton">Apenas fechar</button>
+          </div>
+        </form>
       </div>
     </div>
   </body>

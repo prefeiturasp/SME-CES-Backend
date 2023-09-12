@@ -2,8 +2,11 @@ from django.contrib import admin
 from django.db.models import Q
 from django_admin_listfilter_dropdown.filters import DropdownFilter, RelatedDropdownFilter, ChoiceDropdownFilter
 from rangefilter.filters import DateRangeFilter
-from .models import Pesquisa
+from .models import Pesquisa, Resposta, Token
 from core.models import Acao
+
+admin.site.register(Token)
+admin.site.register(Resposta)
 
 
 @admin.register(Pesquisa)
@@ -46,3 +49,12 @@ class PesquisaAdmin(admin.ModelAdmin):
                 kwargs["queryset"] = Acao.objects.filter(sistema=user.sistema)
 
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+
+# @admin.register(Resposta)
+# class RespostaAdmin(admin.ModelAdmin):
+#     model = Resposta
+#     list_display = ('uuid', 'usuario', 'pesquisa', 'nota', 'quantidade_pulos', 'criado_em', 'alterado_em', )
+#     search_fields = ('uuid', 'usuario__username', 'pesquisa__uuid', 'pesquisa__acao__nome',)
+#     list_filter = ('nota', 'quantidade_pulos', )
+#     search_help_text = 'Pesquise por uuid, identificação usuário, uuid pesquisa, nome da ação.'

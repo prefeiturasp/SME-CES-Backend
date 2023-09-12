@@ -16,6 +16,7 @@ from .utils import envia_email_novo_usuario
 class Usuario(AbstractUser):
     history = AuditlogHistoryField()
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, null=True)
+    nome = models.CharField(verbose_name='Nome', max_length=250, blank=True)
     coordenadoria = models.ForeignKey(
         'core.Coordenadoria', on_delete=models.PROTECT, related_name="usuarios_coordenadoria", blank=True, null=True)
     sistema = models.ForeignKey(

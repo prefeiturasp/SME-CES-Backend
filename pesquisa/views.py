@@ -1,32 +1,109 @@
+import logging
 from django.shortcuts import render
-from rest_framework import viewsets
+from django.shortcuts import redirect
+from django.urls import reverse
+from django.core.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from .services.buscar_pesquisa import buscar_pesquisa, buscar_pesquisa_por_token, gerar_url_pesquisa
-from drf_spectacular.utils import extend_schema, extend_schema_view
-from drf_spectacular.utils import OpenApiExample, OpenApiResponse, OpenApiParameter, OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, extend_schema
+
+from .services.pesquisa import PesquisaService
 # window.open("http://localhost:8000/pesquisa/ces/comentario", "_blank", "toolbar=no, location=no, directories=no,status=no, menubar=no, scrollbars=yes, resizable=yes, copyhistory=yes, width=600, height=600");
+logger = logging.getLogger(__name__)
+
+PRIMEIRO_PASSO = 'atribuir_nota'
+SEGUNDO_PASSO = 'atribuir_comentario'
+TERCEIRO_PASSO = 'agradecimento'
 
 
-def pesquisa_passo_um(request):
+def handle_token(request):
+    """
+    Função utilitária para lidar com a recuperação e validação de tokens.
+    Retorna a instância do token se for válida, ou None se não for.
+    """
     token = request.GET.get('token')
 
+    if token:
+        request.session["token"] = token
+    else:
+        token = request.session.get("token")
+
     try:
-        pesquisa = buscar_pesquisa_por_token(token)
-        return render(request, 'ces/pesquisa_passo_um.html', {'afirmacao': pesquisa.afirmacao})
-    except Exception as error:
-        # print(error)
+        service = PesquisaService(token=token)
+
+        if not service.token_instance:
+            raise ValidationError(message='Token requerido')
+
+        return service.token_instance
+    except Exception as err:
+        print(err)
+        return None
+
+
+def atribuir_nota_view(request):
+    token_instance = handle_token(request)
+
+    if token_instance and token_instance.disponivel:
+        if request.method == 'POST':
+            try:
+                nota = request.POST['nota']
+            except Exception:
+                nota = None
+
+            if nota:
+                resposta = token_instance.atribuir_resposta(nota)
+                request.session["resposta_uuid"] = str(resposta.uuid)
+                return redirect(reverse(SEGUNDO_PASSO))
+            else:
+                del request.session['token']
+                token_instance.responder_depois()
+                return redirect(reverse(TERCEIRO_PASSO))
+        else:
+            return render(request, 'ces/pesquisa_atribuir_nota.html', {'afirmacao': token_instance.pesquisa.afirmacao})
+    else:
         return render(request, 'ces/pagina_invalida.html')
 
 
-def pesquisa_passo_dois(request):
-    return render(request, 'ces/pesquisa_passo_dois.html')
+def atribuir_comentario_view(request):
+    token = handle_token(request)
+
+    if not token:
+        return render(request, 'ces/pagina_invalida.html')
+    try:
+        resposta_uuid = request.session.get("resposta_uuid")
+    except Exception as err:
+        logger.error(err)
+        return render(request, 'ces/pagina_invalida.html')
+
+    try:
+        resposta = token.respostas.get(uuid=resposta_uuid)
+        if resposta.comentario:
+            raise ValidationError(message='Pesquisa indisponível')
+    except Exception as err:
+        logger.error(err)
+        return render(request, 'ces/pagina_invalida.html')
+
+    if request.method == 'POST':
+        try:
+            comentario = request.POST['comentario']
+        except Exception as err:
+            logger.error(err)
+            comentario = None
+
+        if comentario:
+            token.atribuir_comentario(resposta_uuid, comentario)
+
+        del request.session['token']
+        del request.session['resposta_uuid']
+        return redirect(reverse(TERCEIRO_PASSO))
+    else:
+        return render(request, 'ces/pesquisa_atribuir_comentario.html')
 
 
-def pesquisa_passo_tres(request):
-    return render(request, 'ces/pesquisa_passo_tres.html')
+def agradecimento_view(request):
+    return render(request, 'ces/pesquisa_agradecimento.html')
 
 
 @extend_schema(
@@ -53,14 +130,10 @@ class PesquisasView(APIView):
             return Response({"erro": "'recurso_acao' é obrigatório, 'metodo_recurso_acao' é obrigatório", "mensagem": "Parâmetros obrigatórios faltando."},
                             status=status.HTTP_400_BAD_REQUEST)
         try:
-            pesquisa, token = buscar_pesquisa(
-                identificacao_usuario,
-                recurso_acao,
-                metodo_recurso_acao
-            )
+            service = PesquisaService(identificacao_usuario, recurso_acao, metodo_recurso_acao)
+            url = service.get_token_pesquisa()
         except Exception as e:
+            print(e)
             return Response({'error': e}, status=status.HTTP_400_BAD_REQUEST)
-
-        url = gerar_url_pesquisa(token)
 
         return Response({'url': url}, status=status.HTTP_200_OK)
