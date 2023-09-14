@@ -61,7 +61,8 @@ INSTALLED_APPS = [
     'comum',
     'core',
     'usuario',
-    'pesquisa'
+    'pesquisa',
+    'relatorio'
 ]
 
 MIDDLEWARE = [
@@ -209,6 +210,7 @@ DOMAIN_URL = env('DOMAIN_URL', default='http://localhost:8000')
 
 ADMIN_REORDER = (
     {'app': 'usuario', 'models': ('usuario.Usuario', )},
-    {'app': 'core', 'models': ('core.Coordenadoria', 'core.Sistema', 'core.Acao', 'pesquisa.Pesquisa', 'pesquisa.Token')},
-    {'app': 'auditlog', 'label': 'Logs'}
+    {'app': 'core', 'models': ('core.Coordenadoria', 'core.Sistema', 'core.Acao')},
+    {'app': 'pesquisa', 'models': ('pesquisa.Pesquisa', 'pesquisa.Token', 'relatorio.Relatorio')},
+    {'app': 'auditlog', 'label': 'Logs'},
 )

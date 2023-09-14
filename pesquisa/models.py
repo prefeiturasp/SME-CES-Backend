@@ -55,7 +55,7 @@ class Pesquisa(ModeloBase):
     )
 
     def __str__(self):
-        return self.acao.nome + ' | ' + self.acao.sistema.nome
+        return self.acao.nome
 
     @property
     def periodo_valido(self):

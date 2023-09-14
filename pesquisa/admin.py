@@ -1,8 +1,12 @@
+from import_export import resources
 from django.contrib import admin
 from django.db.models import Q
 from django_admin_listfilter_dropdown.filters import DropdownFilter, RelatedDropdownFilter, ChoiceDropdownFilter
 from rangefilter.filters import DateRangeFilter
-from .models import Pesquisa, Resposta, Token
+from import_export import fields
+from import_export.admin import ImportExportModelAdmin
+
+from .models import Pesquisa, Token
 from core.models import Acao
 
 
@@ -47,8 +51,59 @@ class PesquisaAdmin(admin.ModelAdmin):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
+class TokenResource(resources.ModelResource):
+    coordenadoria = fields.Field()
+    sistema = fields.Field()
+    nota = fields.Field()
+    comentario = fields.Field()
+    criado_em = fields.Field()
+    alterado_em = fields.Field()
+
+    class Meta:
+        model = Token
+        fields = ('coordenadoria', 'sistema', 'pesquisa', 'usuario', 'nota', 'comentario', 'pulos', 'criado_em', 'alterado_em', )
+        export_order = ('coordenadoria', 'sistema', 'pesquisa', 'usuario', 'nota', 'comentario', 'pulos', 'criado_em', 'alterado_em', )
+
+    def dehydrate_usuario(self, obj):
+        return obj.usuario.nome
+
+    def dehydrate_coordenadoria(self, obj):
+        return obj.pesquisa.acao.sistema.coordenadoria.nome
+
+    def dehydrate_sistema(self, obj):
+        return obj.pesquisa.acao.sistema.nome
+
+    def dehydrate_pesquisa(self, obj):
+        return obj.pesquisa.__str__()
+
+    def dehydrate_nota(self, obj):
+        try:
+            return obj.resposta.nota
+        except Exception:
+            return '-'
+
+    def dehydrate_comentario(self, obj):
+        try:
+            return obj.resposta.comentario
+        except Exception:
+            return '-'
+
+    def dehydrate_criado_em(self, obj):
+        try:
+            return obj.resposta.criado_em
+        except Exception:
+            return '-'
+
+    def dehydrate_alterado_em(self, obj):
+        try:
+            return obj.resposta.alterado_em
+        except Exception:
+            return '-'
+
+
 @admin.register(Token)
-class TokenAdmin(admin.ModelAdmin):
+class TokenAdmin(ImportExportModelAdmin):
+    resource_class = TokenResource
     model = Token
     list_display = ('uuid', 'usuario', 'pesquisa', 'respondida', 'respondida_em', 'criado_em', 'alterado_em', )
     raw_id_fields = ('usuario', 'pesquisa', )
