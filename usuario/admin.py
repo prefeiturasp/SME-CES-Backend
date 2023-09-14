@@ -13,13 +13,13 @@ def reenviar_email_redefinicao_senha(modeladmin, request, queryset):
 
 class UsuarioAdmin(UserAdmin):
     model = Usuario
-    list_display = ('id', 'uuid', 'email', 'first_name', 'coordenadoria', 'sistema', 'auth_token', 'date_joined', )
-    search_fields = ('first_name',  'email', )
+    list_display = ('id', 'uuid', 'email', 'nome', 'coordenadoria', 'sistema', 'auth_token', 'date_joined', )
+    search_fields = ('nome',  'email', )
     search_help_text = 'Pesquise por nome.'
-    fieldsets = (('Acesso', {'fields': ('username', 'password')}), ('Informações pessoais', {'fields': ('first_name', 'coordenadoria', 'sistema', )}),
+    fieldsets = (('Acesso', {'fields': ('username', 'password')}), ('Informações pessoais', {'fields': ('nome', 'coordenadoria', 'sistema', )}),
                  ('Permissões', {'fields': ('is_active', 'is_staff', )}))
     add_fieldsets = (('Acesso', {'fields': ('username', 'password1', 'password2')}),
-                     ('', {'fields': ('first_name', 'coordenadoria', 'sistema',)}),)
+                     ('', {'fields': ('nome', 'email', 'coordenadoria', 'sistema',)}),)
 
     actions = [
         reenviar_email_redefinicao_senha,

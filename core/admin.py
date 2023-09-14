@@ -21,7 +21,7 @@ class AcaoAdmin(admin.ModelAdmin):
     raw_id_fields = ('sistema', )
 
     list_filter = (
-        # ('sistema__nome', DropdownFilter),
+        ('sistema__nome', DropdownFilter),
         ('criado_em', DateRangeFilter),
     )
 

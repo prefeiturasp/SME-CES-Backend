@@ -208,7 +208,7 @@ DOMAIN_URL = env('DOMAIN_URL', default='http://localhost:8000')
 
 
 ADMIN_REORDER = (
-    'usuario',
-    {'app': 'core', 'models': ('core.Coordenadoria', 'core.Sistema', 'core.Acao', 'pesquisa.Pesquisa')},
-    'auditlog'
+    {'app': 'usuario', 'models': ('usuario.Usuario', )},
+    {'app': 'core', 'models': ('core.Coordenadoria', 'core.Sistema', 'core.Acao', 'pesquisa.Pesquisa', 'pesquisa.Token')},
+    {'app': 'auditlog', 'label': 'Logs'}
 )
