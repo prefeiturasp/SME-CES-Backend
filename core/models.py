@@ -68,6 +68,7 @@ class Acao(ModeloIdNome):
         "SubModulo", max_length=255, blank=True, null=True)
 
     rota = models.CharField('Rota', max_length=320)
+
     metodo_requisicao = models.CharField(
         'Método da requisição',
         max_length=15,
@@ -77,8 +78,8 @@ class Acao(ModeloIdNome):
     )
 
     class Meta:
-        verbose_name = "Ação do sistema"
-        verbose_name_plural = "Ações do sistema"
+        verbose_name = "Ação"
+        verbose_name_plural = "Ações"
 
     def save(self, *args, **kwargs):
         if self.modulo:

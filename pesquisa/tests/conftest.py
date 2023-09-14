@@ -1,6 +1,8 @@
 import pytest
+import datetime
 from model_bakery import baker
 from usuario.constants import GRUPO_NIVEL_COORDENADORIA, GRUPO_NIVEL_PO
+from pesquisa.models import Token
 
 
 @pytest.fixture
@@ -62,6 +64,11 @@ def payload_acao_zpto():
 
 
 @pytest.fixture
+def payload_token_nao_registrado():
+    return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjoiMjlhZmRlNjgtZTZiYS00NTNjLWIyOWItZjIxMTUyMjRlM2I5IiwicGVzcXVpc2EiOiJjMzFhM2Q4OC0xYzI1LTRjOTctYTViMi1mZGQyNzBlMDIzYWUiLCJ0aW1lc3RhbXAiOjE2OTQ2NjA5NjMuOTQ4NTM1LCJleHAiOjE2OTQ2NTA3NjN9.scjtmkstXGpLwVqaReL3-bQXJj0aK-pV7ATZjU6B7kw'
+
+
+@pytest.fixture
 def acao_xpto(sistema_xpto):
     return baker.make(
         'Acao',
@@ -81,6 +88,15 @@ def pesquisa_x(acao_xpto):
 
 
 @pytest.fixture
+def pesquisa_y_inativa(acao_xpto):
+    return baker.make(
+        'Pesquisa',
+        acao=acao_xpto,
+        ativa=False
+    )
+
+
+@pytest.fixture
 def participante_sistema_xpto(sistema_xpto, grupo_po):
     return baker.make(
         'Usuario',
@@ -92,11 +108,33 @@ def participante_sistema_xpto(sistema_xpto, grupo_po):
 
 @pytest.fixture
 def token_pesquisa_x(pesquisa_x, participante_sistema_xpto):
-    return baker.make(
-        'pesquisa.Token',
+    token = Token.objects.create(
         pesquisa=pesquisa_x,
         usuario=participante_sistema_xpto,
     )
+    token.gerar_token()
+    return token
+
+
+@pytest.fixture
+def token_pesquisa_y(pesquisa_y_inativa, participante_sistema_xpto):
+    token = Token.objects.create(
+        pesquisa=pesquisa_y_inativa,
+        usuario=participante_sistema_xpto,
+    )
+    token.gerar_token()
+    return token
+
+
+@pytest.fixture
+def token_pesquisa_x_expirado(pesquisa_x, participante_sistema_xpto):
+    token = Token.objects.create(
+        pesquisa=pesquisa_x,
+        usuario=participante_sistema_xpto,
+    )
+    expiracao = datetime.datetime.utcnow() - datetime.timedelta(minutes=10)
+    token.gerar_token(expiracao)
+    return token
 
 
 @pytest.fixture
@@ -104,5 +142,14 @@ def resposta_token_pesquisa_x(token_pesquisa_x):
     return baker.make(
         'Resposta',
         token=token_pesquisa_x,
+        nota=5,
+    )
+
+
+@pytest.fixture
+def resposta_token_pesquisa_y(token_pesquisa_y):
+    return baker.make(
+        'Resposta',
+        token=token_pesquisa_y,
         nota=5,
     )

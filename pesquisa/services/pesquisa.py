@@ -6,17 +6,15 @@ from usuario.models import Usuario
 from ..models import Pesquisa, Token
 
 
-class PesquisaService:
-    def __init__(self, id_usuario=None, rota=None, metodo=None, token=None):
-        print(id_usuario)
+class BuscarPesquisaService:
+    def __init__(self, id_usuario=None, rota=None, metodo=None):
+
         if id_usuario:
             self.usuario = self.get_usuario(id_usuario)
         if rota and metodo:
             self.pesquisa = self.get_pesquisa(rota, metodo)
-        if token:
-            self.token_instance = self.get_token_by_key(token)
-        else:
-            self.token_instance = None
+        if self.usuario and self.pesquisa:
+            self.get_token()
 
     def get_usuario(self, identificacao):
         try:
@@ -45,26 +43,14 @@ class PesquisaService:
 
         return pesquisa
 
-    def get_token_by_key(self, token):
-        try:
-            token_instance = Token.objects.get(token=token)
-        except Token.DoesNotExist as error:
-            raise ValidationError(message=error)
-
-        return token_instance
-
-    def get_token_pesquisa(self):
+    def get_token(self):
         token, created = Token.objects.get_or_create(usuario=self.usuario, pesquisa=self.pesquisa)
 
         if created or token.disponivel:
-            if token.token_valido():
-                return self.get_url_pesquisa(token.token)
-            else:
-                token.gerar_token()
-                token.save()
-                return self.get_url_pesquisa(token.token)
-
-        return None
+            token.gerar_token()
+            self.url = self.get_url_pesquisa(token.token)
+        else:
+            self.url = None
 
     def get_url_pesquisa(self, token):
         return f'{settings.DOMAIN_URL}/ces?token={token}'

@@ -54,7 +54,7 @@ class Usuario(AbstractUser):
 @receiver(post_save, sender=Usuario)
 def apos_criar_usuario(sender, instance, created, **kwargs):
     if created:
-        if instance.is_staff:
+        if instance.is_staff and instance.email:
             instance.enviar_email_redefinicao_senha()
         else:
             instance.atribui_token()

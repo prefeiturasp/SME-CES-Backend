@@ -1,5 +1,6 @@
 import jwt
 import datetime
+from django.utils import timezone
 from django.db import models
 from django.conf import settings
 from auditlog.models import AuditlogHistoryField
@@ -58,12 +59,14 @@ class Pesquisa(ModeloBase):
 
     @property
     def periodo_valido(self):
-        now = datetime.datetime.now()
+        now = timezone.now()
 
         if self.periodo_inicio is None and self.periodo_fim is None:
             return True
-        if self.periodo_inicio >= now and self.periodo_fim <= now:
+
+        if self.periodo_inicio <= now and self.periodo_fim >= now:
             return True
+
         return False
 
     @property
@@ -76,14 +79,17 @@ class Pesquisa(ModeloBase):
 
 
 class Token(ModeloBase):
+    '''Classe que representa a relação entre a pesquisa e o participante'''
 
     history = AuditlogHistoryField()
 
     pesquisa = models.ForeignKey(
         'Pesquisa', on_delete=models.PROTECT, related_name="tokens", blank=False, null=False)
+
     usuario = models.ForeignKey(
         'usuario.Usuario', on_delete=models.PROTECT, blank=True, null=True
     )
+
     token = models.TextField('Token', blank=True, null=True)
 
     pulos = models.PositiveIntegerField('Pulos', help_text='Quantidade de vezes em que o usuário pulou a pesquisa.', default=0)
@@ -92,43 +98,54 @@ class Token(ModeloBase):
         verbose_name = 'Token'
         verbose_name_plural = 'Tokens'
 
-    def save(self, *args, **kwargs):
-        if not self.token:
-            self.gerar_token()
-
-        return super().save(*args, **kwargs)
-
     @property
     def respondida(self):
-        return self.respostas.exists()
+        return True if self.resposta_obj else None
 
     @property
     def disponivel(self):
-        return self.pesquisa.valida and not self.respondida and not self.pulos_excedidos
+        return self.pesquisa.valida and not self.respondida and not self.pulos_excedido
 
     @property
     def pulos_excedido(self):
-        return self.pulos > 0 and (self.pulos >= self.pesquisa.limite_pular)
+        return self.pulos > 0 and (self.pulos > self.pesquisa.limite_pular)
 
-    def gerar_token(self):
-        expiracao = datetime.datetime.utcnow() + datetime.timedelta(minutes=self.pesquisa.validade_token)
+    @property
+    def resposta_obj(self):
+        try:
+            return self.resposta
+        except Exception:
+            return None
+
+    def gerar_token(self, expiracao=None):
+        if not expiracao:
+            expiracao = datetime.datetime.utcnow() + datetime.timedelta(minutes=self.pesquisa.validade_token)
+
+        timestamp_atual = datetime.datetime.utcnow()
+
         payload = {
             'usuario': str(self.usuario.uuid),
             'pesquisa': str(self.pesquisa.uuid),
+            'timestamp': timestamp_atual.timestamp(),
             'exp': expiracao,
         }
         self.token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
+        self.save()
 
+    @property
     def token_valido(self):
         try:
             payload = jwt.decode(self.token, settings.SECRET_KEY, algorithms=['HS256'])
             payload['usuario']
             payload['pesquisa']
-        except jwt.ExpiredSignatureError:
+        except jwt.ExpiredSignatureError as err:
+            print(err)
             return False
-        except jwt.DecodeError:
+        except jwt.DecodeError as err:
+            print(err)
             return False
-        except Exception:
+        except Exception as err:
+            print(err)
             return False
         return True
 
@@ -136,23 +153,27 @@ class Token(ModeloBase):
         self.pulos += 1
         self.save()
 
-    def atribuir_resposta(self, nota):
-        resposta = self.respostas.create(nota=nota)
-        return resposta
+        if self.pulos_excedido:
+            self.invalidar_token()
 
-    def atribuir_comentario(self, resposta_uuid, comentario):
-        resposta = self.respostas.get(uuid=resposta_uuid)
-        resposta.comentario = comentario
-        resposta.save()
+    def atribuir_resposta(self, nota):
+        Resposta.objects.create(token=self, nota=nota)
+
+    def atribuir_comentario(self, comentario):
+        self.resposta_obj.comentario = comentario
+        self.resposta_obj.save()
+
+    def invalidar_token(self):
+        expiracao = datetime.datetime.utcnow() - datetime.timedelta(minutes=10)
+        self.gerar_token(expiracao)
 
 
 class Resposta(ModeloBase):
 
     history = AuditlogHistoryField()
 
-    token = models.ForeignKey('Token', on_delete=models.PROTECT,
-                              related_name="respostas",
-                              blank=True, null=True)
+    token = models.OneToOneField('Token', on_delete=models.PROTECT,
+                                 blank=True, null=True)
     nota = models.PositiveIntegerField('Nota', blank=False, null=False, default=0)
     comentario = models.TextField('Comentário', blank=True, null=True)
 
