@@ -53,7 +53,7 @@ pipeline {
                 script{                        
                     withCredentials([file(credentialsId: "${kubeconfig}", variable: 'config')]){
                         sh('cp $config '+"$home"+'/.kube/config')
-                        sh 'kubectl rollout restart deployment/bensfisicos-back -n ${namespace}'                            
+                        sh 'kubectl rollout restart deployment/ces-backend -n ${namespace}'                            
                     }                    
                 }
             }           
