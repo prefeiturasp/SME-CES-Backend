@@ -6,9 +6,11 @@ pipeline {
       namespace = "${env.branchname == 'pre-prod' ? 'sme-ces-d1' : env.branchname == 'development' ? 'ces-dev' : env.branchname == 'develop' ? 'ces-dev' : 'sme-ces' }"
     }
   
-    agent {
-      kubernetes { label 'python311' }
-    }
+    agent { kubernetes { 
+                  label 'builder'
+                  defaultContainer 'builder'
+                }
+              } 
 
     options {
       buildDiscarder(logRotator(numToKeepStr: '15', artifactNumToKeepStr: '15'))
