@@ -42,12 +42,12 @@ pipeline {
           when { anyOf { branch 'master'; branch 'main'; branch "story/*"; branch 'development'; branch 'develop'; branch 'release'; branch 'homolog';  } } 
           steps {
             script {
-              imagename1 = "registry.sme.prefeitura.sp.gov.br/${env.branchname}/ces-back"
-              dockerImage1 = docker.build(imagename1, "-f Dockerfile .")
+              imagename = "registry.sme.prefeitura.sp.gov.br/${env.branchname}/sme-ces-back"
+              dockerImage1 = docker.build(imagename, "-f Dockerfile .")
               docker.withRegistry( 'https://registry.sme.prefeitura.sp.gov.br', registryCredential ) {
               dockerImage1.push()
               }
-              sh "docker rmi $imagename1"
+              sh "docker rmi $imagename"
             }
           }
         }
