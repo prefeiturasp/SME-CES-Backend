@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, extend_schema
 from pesquisa.models import Token
 from .services.pesquisa import BuscarPesquisaService
+from usuario.permissions import IsAPIUser
 # window.open("http://localhost:8000/pesquisa/ces/comentario", "_blank", "toolbar=no, location=no, directories=no,status=no, menubar=no, scrollbars=yes, resizable=yes, copyhistory=yes, width=600, height=600");
 logger = logging.getLogger(__name__)
 
@@ -111,7 +112,7 @@ def agradecimento_view(request):
     description='Busca pesquisa disponível para o recurso e usuário especificado.'
 )
 class PesquisasView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated & IsAPIUser]
     http_method_names = ['get']
 
     def get(self, request, *args, **kwargs):

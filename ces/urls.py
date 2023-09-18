@@ -30,6 +30,7 @@ urlpatterns = [
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 
     path('', include('pesquisa.urls')),
+    path('', include('usuario.urls')),
 
     # swagger
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

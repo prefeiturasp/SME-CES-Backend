@@ -53,4 +53,4 @@ class BuscarPesquisaService:
             self.url = None
 
     def get_url_pesquisa(self, token):
-        return f'{settings.DOMAIN_URL}/ces?token={token}'
+        return f'{settings.ADMIN_URL}/ces?token={token}'

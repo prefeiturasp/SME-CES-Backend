@@ -1,7 +1,7 @@
 import pytest
 import datetime
 from model_bakery import baker
-from usuario.constants import GRUPO_NIVEL_COORDENADORIA, GRUPO_NIVEL_PO
+from usuario.constants import GRUPO_NIVEL_COORDENADORIA, GRUPO_NIVEL_SISTEMA, GRUPO_NIVEL_API
 from pesquisa.models import Token
 
 
@@ -14,10 +14,18 @@ def grupo_coordenadoria():
 
 
 @pytest.fixture
-def grupo_po():
+def grupo_sistema():
     return baker.make(
         'Group',
-        name=GRUPO_NIVEL_PO
+        name=GRUPO_NIVEL_SISTEMA
+    )
+
+
+@pytest.fixture
+def grupo_api():
+    return baker.make(
+        'Group',
+        name=GRUPO_NIVEL_API
     )
 
 
@@ -30,7 +38,7 @@ def sistema_xpto():
 
 
 @pytest.fixture
-def usuario_sistema_xpto(sistema_xpto, grupo_po):
+def usuario_sistema_xpto(sistema_xpto, grupo_sistema):
     return baker.make(
         'Usuario',
         username='sistema_xpto',
@@ -40,8 +48,9 @@ def usuario_sistema_xpto(sistema_xpto, grupo_po):
 
 
 @pytest.fixture
-def token_authenticated_client(usuario_sistema_xpto):
+def token_authenticated_client(usuario_sistema_xpto, grupo_api):
     from rest_framework.test import APIClient
+    usuario_sistema_xpto.set_usuario_api()
     api_client = APIClient()
     api_client.credentials(HTTP_AUTHORIZATION=f'Token {usuario_sistema_xpto.auth_token}')
     return api_client
@@ -97,7 +106,7 @@ def pesquisa_y_inativa(acao_xpto):
 
 
 @pytest.fixture
-def participante_sistema_xpto(sistema_xpto, grupo_po):
+def participante_sistema_xpto(sistema_xpto, grupo_sistema):
     return baker.make(
         'Usuario',
         username='Participante 1 sistema XPTO',

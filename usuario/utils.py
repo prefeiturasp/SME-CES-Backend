@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
-from usuario.constants import GRUPO_NIVEL_PO, GRUPO_NIVEL_COORDENADORIA
+from usuario.constants import GRUPO_NIVEL_SISTEMA, GRUPO_NIVEL_COORDENADORIA, GRUPO_NIVEL_API, GRUPO_NIVEL_PARTICIPANTE
 from ces.utils import email_utils
 
 VIEW = 'view'
@@ -32,8 +32,10 @@ def setup_grupos_e_permissoes():
     '''
         Cria grupos e atribui permissões.
         NIVEL_COORDENADORIA tem acesso a usuários, sistemas, pesquisas, acoes, respostas e relatórios.
-        NIVEL_PO tem acesso a pesquisas, acoes, respostas e relatórios.
+        NIVEL_SISTEMA tem acesso a pesquisas, acoes, respostas e relatórios.
     '''
+    Group.objects.get_or_create(name=GRUPO_NIVEL_API)
+    Group.objects.get_or_create(name=GRUPO_NIVEL_PARTICIPANTE)
 
     coordenador, _ = Group.objects.get_or_create(name=GRUPO_NIVEL_COORDENADORIA)
     coordenador_settings = {
@@ -42,15 +44,17 @@ def setup_grupos_e_permissoes():
         '_usuario': ALL,
         '_pesquisa': ALL,
         '_resposta': ALL,
+        '_relatorio': ALL
     }
     atribuir_permissao(coordenador, coordenador_settings)
 
-    po, _ = Group.objects.get_or_create(name=GRUPO_NIVEL_PO)
+    po, _ = Group.objects.get_or_create(name=GRUPO_NIVEL_SISTEMA)
     po_settings = {
         '_sistema': [VIEW],
         '_acao': ALL,
         '_pesquisa': ALL,
         '_resposta': ALL,
+        '_relatorio': ALL
     }
     atribuir_permissao(po, po_settings)
 
