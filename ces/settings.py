@@ -21,16 +21,20 @@ env = environ.Env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env.read_env(str(BASE_DIR) + "/.env")
+# env.read_env(str(BASE_DIR) + "/.env")
+try:
+    env.read_env(str(BASE_DIR) + "/.env")
+except FileNotFoundError:
+    pass
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5dna-1qns*ab(3z+3#tg&2rlti@@mf-&*ood-gzzo0j3b8s7bp'
+SECRET_KEY = env('SECRET_KEY', default='django-insecure-5dna-1qns*ab(3z+3#tg&2rlti@@mf-&*ood-gzzo0j3b8s7bp')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG', default=True)
+DEBUG = env('DEBUG', default=False)
 
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["*"])
 
@@ -125,12 +129,6 @@ AUTH_PASSWORD_VALIDATORS = [
             'min_length': 6,
         }
     },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
 ]
 
 
@@ -149,8 +147,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/django_static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
 
 # MEDIA
 # https://docs.djangoproject.com/en/dev/ref/settings/#media-root
@@ -204,12 +205,11 @@ EMAIL_USE_SSL = env.bool('EMAIL_USE_SSL', default=False)
 DEFAULT_FROM_EMAIL = EMAIL_HOST
 
 
-ADMIN_URL = env('ADMIN_URL', default='http://localhost:8000')
-DOMAIN_URL = env('DOMAIN_URL', default='http://localhost:8000')
+ADMIN_URL = env('ADMIN_URL')
 
 
 ADMIN_REORDER = (
-    {'app': 'usuario', 'models': ('usuario.Usuario', )},
+    {'app': 'usuario', 'models': ('usuario.Usuario', 'auth.Group')},
     {'app': 'core', 'models': ('core.Coordenadoria', 'core.Sistema', 'core.Acao')},
     {'app': 'pesquisa', 'models': ('pesquisa.Pesquisa', 'pesquisa.Token', 'relatorio.Relatorio')},
     {'app': 'auditlog', 'label': 'Logs'},
