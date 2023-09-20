@@ -21,7 +21,6 @@ def atribuir_permissao(grupo, settings):
         verbs_by_key = settings[key]
 
         for permission in Permission.objects.all():
-            # print(item.codename)
             for verb in verb_options:
                 if (verb + key == permission.codename) and verb in verbs_by_key:
                     grupo.permissions.add(permission)
@@ -44,6 +43,7 @@ def setup_grupos_e_permissoes():
         '_usuario': ALL,
         '_pesquisa': ALL,
         '_resposta': ALL,
+        '_token': ALL,
         '_relatorio': ALL
     }
     atribuir_permissao(coordenador, coordenador_settings)
@@ -54,6 +54,7 @@ def setup_grupos_e_permissoes():
         '_acao': ALL,
         '_pesquisa': ALL,
         '_resposta': ALL,
+        '_token': ALL,
         '_relatorio': ALL
     }
     atribuir_permissao(po, po_settings)

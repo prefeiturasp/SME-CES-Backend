@@ -10,7 +10,7 @@ from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, extend_schema
 from pesquisa.models import Token
 from .services.pesquisa import BuscarPesquisaService
 from usuario.permissions import IsAPIUser
-# window.open("http://localhost:8000/pesquisa/ces/comentario", "_blank", "toolbar=no, location=no, directories=no,status=no, menubar=no, scrollbars=yes, resizable=yes, copyhistory=yes, width=600, height=600");
+
 logger = logging.getLogger(__name__)
 
 PRIMEIRO_PASSO = 'atribuir_nota'
@@ -35,8 +35,7 @@ def handle_validation(request, step=None):
 
     try:
         token_instance = Token.objects.get(token=token)
-    except Token.DoesNotExist as error:
-        logger.error(error)
+    except Token.DoesNotExist:
         return None, 'Token não encontrado.'
 
     if not token_instance.token_valido:
@@ -128,9 +127,9 @@ class PesquisasView(APIView):
                             status=status.HTTP_400_BAD_REQUEST)
         try:
             service = BuscarPesquisaService(identificacao_usuario, recurso_acao, metodo_recurso_acao)
-        except Exception as e:
-            print(e)
-            return Response({'error': e}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as error:
+            logger.error('Erro buscar pesquisa: %r', error)
+            return Response({'error': error}, status=status.HTTP_400_BAD_REQUEST)
 
         if service.url:
             resp = {'url': service.url}
