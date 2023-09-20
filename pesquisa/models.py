@@ -138,14 +138,11 @@ class Token(ModeloBase):
             payload = jwt.decode(self.token, settings.SECRET_KEY, algorithms=['HS256'])
             payload['usuario']
             payload['pesquisa']
-        except jwt.ExpiredSignatureError as err:
-            print(err)
+        except jwt.ExpiredSignatureError:
             return False
-        except jwt.DecodeError as err:
-            print(err)
+        except jwt.DecodeError:
             return False
-        except Exception as err:
-            print(err)
+        except Exception:
             return False
         return True
 
