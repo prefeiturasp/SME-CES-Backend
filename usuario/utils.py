@@ -38,7 +38,7 @@ def setup_grupos_e_permissoes():
 
     coordenador, _ = Group.objects.get_or_create(name=GRUPO_NIVEL_COORDENADORIA)
     coordenador_settings = {
-        '_sistema': [VIEW, CHANGE],
+        '_sistema': ALL,
         '_acao': ALL,
         '_usuario': ALL,
         '_pesquisa': ALL,
