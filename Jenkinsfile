@@ -65,7 +65,7 @@ pipeline {
     }
 }
 
-
+//test
 def getKubeconf(branchName) {
     if("main".equals(branchName)) { return "config_prd"; }
     else if ("master".equals(branchName)) { return "config_prd"; }

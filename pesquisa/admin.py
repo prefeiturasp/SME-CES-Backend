@@ -14,7 +14,7 @@ from core.models import Acao
 class PesquisaAdmin(admin.ModelAdmin):
     model = Pesquisa
     list_display = ('id', 'ativa', 'sistema', 'acao', 'criado_em', 'alterado_em', )
-    readonly_fields = ('uuid', 'id', 'criado_em', 'alterado_em')
+    readonly_fields = ('anonima', 'uuid', 'id', 'criado_em', 'alterado_em')
     search_fields = ('uuid', 'nome', 'acao__sistema__nome', 'acao__sistema_coordenadoria__nome')
     search_help_text = 'Pesquise por uuid, nome, sistema ou coordenadoria.'
     raw_id_fields = ('acao', )
@@ -109,6 +109,7 @@ class TokenAdmin(ImportExportModelAdmin):
     raw_id_fields = ('usuario', 'pesquisa', )
     readonly_fields = ('pulos', 'uuid', 'id', 'criado_em', 'alterado_em', 'uuid_resposta', 'nota_resposta', 'comentario_resposta',)
     list_filter = (
+        ('pesquisa__acao__sistema__coordenadoria__nome', DropdownFilter),
         ('pesquisa__acao__sistema__nome', DropdownFilter),
         ('criado_em', DateRangeFilter),
     )
@@ -127,3 +128,13 @@ class TokenAdmin(ImportExportModelAdmin):
 
     def comentario_resposta(self, obj):
         return obj.resposta.comentario
+
+    def get_queryset(self, request):
+        user = request.user
+
+        if user.is_po:
+            return Token.objects.filter(pesquisa__acao__sistema=user.sistema.id)
+        if user.is_coordenador:
+            return Token.objects.filter(pesquisa__acao__sistema__coordenadoria=user.coordenadoria)
+
+        return Token.objects.all()

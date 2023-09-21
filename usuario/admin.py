@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.models import Group
 from rest_framework.authtoken.models import TokenProxy
 from django_admin_listfilter_dropdown.filters import DropdownFilter, RelatedDropdownFilter, ChoiceDropdownFilter
 from usuario.models import Usuario
@@ -28,7 +27,7 @@ class UsuarioAdmin(UserAdmin):
     fieldsets = (('Acesso', {'fields': ('username', 'password')}), ('Informações pessoais', {'fields': ('nome', 'email', 'coordenadoria', 'sistema', )}),
                  ('Permissões', {'fields': ('is_active', 'is_staff', 'groups',)}), ('API', {'fields': ('auth_token', )}))
     add_fieldsets = (('Acesso', {'fields': ('username', 'password1', 'password2')}),
-                     ('', {'fields': ('nome', 'email', 'coordenadoria', 'sistema',)}), ('Permissões', {'fields': ('is_active', 'is_staff', )}),)
+                     ('', {'fields': ('nome', 'email', 'coordenadoria', 'sistema',)}), ('Permissões', {'fields': ('is_active', 'is_staff', 'groups', )}),)
     readonly_fields = ('auth_token', )
     actions = [
         reenviar_email_redefinicao_senha,
@@ -51,9 +50,10 @@ class UsuarioAdmin(UserAdmin):
         if user.is_coordenador:
             if db_field.name == "coordenadoria":
                 kwargs["queryset"] = Coordenadoria.objects.filter(usuarios_coordenadoria__in=[user])
+            if db_field.name == "sistema":
+                kwargs["queryset"] = user.coordenadoria.sistemas
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 admin.site.register(Usuario, UsuarioAdmin)
-# admin.site.unregister(Group)
 admin.site.unregister(TokenProxy)

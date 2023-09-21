@@ -1,6 +1,6 @@
 import uuid
 from django.db import models
-from django.contrib.auth.models import AbstractUser, Group
+from django.contrib.auth.models import AbstractUser, Group, UserManager
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 
@@ -14,6 +14,11 @@ from .utils import envia_email_novo_usuario
 from .services import AuthService
 
 
+class UsuariosParticipantes(models.Manager):
+    def get_queryset(self):
+        return super(UsuariosParticipantes, self).get_queryset().filter(groups=AuthService.get_participante_group())
+
+
 class Usuario(AbstractUser):
     history = AuditlogHistoryField()
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, null=True)
@@ -22,6 +27,10 @@ class Usuario(AbstractUser):
         'core.Coordenadoria', on_delete=models.PROTECT, related_name="usuarios_coordenadoria", blank=True, null=True)
     sistema = models.ForeignKey(
         'core.Sistema', on_delete=models.PROTECT, related_name="usuarios_sistema", blank=True, null=True)
+
+    objects = UserManager()
+
+    participantes = UsuariosParticipantes()
 
     def save(self, *args, **kwargs):
         if self.sistema:

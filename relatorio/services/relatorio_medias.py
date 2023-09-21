@@ -2,6 +2,8 @@ import csv
 from django.db.models import Sum
 from tempfile import NamedTemporaryFile
 from pesquisa.models import Pesquisa
+from usuario.models import Usuario
+from usuario.services import AuthService
 
 
 def get_infos(relatorio, pesquisa):
@@ -9,7 +11,6 @@ def get_infos(relatorio, pesquisa):
     qnt_respostas = 0
     qnt_pulos = 0
 
-    print('oi', pesquisa.tokens)
     tokens_com_resposta = pesquisa.tokens.filter(resposta__isnull=False,
                                                  resposta__criado_em__gte=relatorio.periodo_inicio,
                                                  resposta__criado_em__lte=relatorio.periodo_fim)
@@ -18,7 +19,6 @@ def get_infos(relatorio, pesquisa):
     for peso in [1, 2, 3, 4, 5, 6, 7]:
         total_ocorrencias += tokens_com_resposta.filter(resposta__nota=peso).count() * peso
 
-    print(total_ocorrencias, tokens_com_resposta)
     try:
         media = total_ocorrencias/tokens_com_resposta.count()
     except Exception:
@@ -36,7 +36,7 @@ def gerar_csv(relatorio):
     with NamedTemporaryFile(mode="r+", prefix='relatorio', suffix='.csv') as tmp:
         escritor_csv = csv.writer(tmp.file, delimiter=";")
 
-        escritor_csv.writerow(['coordenadoria', 'sistema', 'pesquisa', 'media', 'quantidade_respostas',
+        escritor_csv.writerow(['coordenadoria', 'sistema', 'pesquisa', 'media', 'quantidade_participantes', 'quantidade_respostas',
                               'quantidade_pulos',])
 
         if relatorio.pesquisa:
@@ -50,11 +50,13 @@ def gerar_csv(relatorio):
             filename = "relatorio_por_coordenadoria.csv"
 
         for pesquisa in pesquisas:
+            participantes = Usuario.participantes.filter(sistema=pesquisa.acao.sistema)
             media, qnt_respostas, qnt_pulos = get_infos(relatorio, pesquisa)
             escritor_csv.writerow([pesquisa.acao.sistema.coordenadoria.nome,
                                    pesquisa.acao.sistema.nome,
                                    pesquisa,
                                    media,
+                                   participantes.count(),
                                    qnt_respostas,
                                    qnt_pulos])
 
