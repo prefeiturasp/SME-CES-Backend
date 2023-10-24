@@ -129,11 +129,6 @@ class PesquisasView(APIView):
             service = BuscarPesquisaService(identificacao_usuario, recurso_acao, metodo_recurso_acao)
         except Exception as error:
             logger.error('Erro buscar pesquisa: %r', error)
-            return Response({'error': error}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'url': None, 'error': error}, status=status.HTTP_200_OK)
 
-        if service.url:
-            resp = {'url': service.url}
-        else:
-            resp = None
-
-        return Response(resp, status=status.HTTP_200_OK)
+        return Response({'url': service.url}, status=status.HTTP_200_OK)

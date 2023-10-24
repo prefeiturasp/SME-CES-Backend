@@ -8,7 +8,7 @@ from ..models import Pesquisa, Token
 
 class BuscarPesquisaService:
     def __init__(self, id_usuario=None, rota=None, metodo=None):
-
+        self.url = None
         if id_usuario:
             self.usuario = self.get_usuario(id_usuario)
         if rota and metodo:
@@ -31,7 +31,7 @@ class BuscarPesquisaService:
                     (Q(periodo_inicio__isnull=True) &
                      Q(periodo_fim__isnull=True)) |
                     (Q(periodo_inicio__gte=datetime.datetime.now()) &
-                     Q(periodo_inicio__lte=datetime.datetime.now()))
+                     Q(periodo_fim__lte=datetime.datetime.now()))
                 ),
                 ativa=True,
                 acao__sistema=self.usuario.sistema,
