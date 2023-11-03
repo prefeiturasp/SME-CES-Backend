@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <title>CES</title>
+    <style>
+      body {
+        font-family: Roboto, Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;        
+      }
+
+      .centered-div {
+        padding: 20px;
+        border: 1px solid #ccc;
+      }
+
+      .header {
+        margin-bottom: 20px;
+      }
+
+      .header img {
+        max-width: 170px;
+        margin-right: 20px;
+      }
+
+      .title {
+        font-size: 24px;
+        font-weight: 600;
+        color: #198459;
+        margin: 8px 0;
+      }
+
+      .subtitle {
+        font-size: 16px;
+        font-weight: 400;
+        color: #42474A;
+      }
+
+      .text {
+        margin-bottom: 20px;
+      }
+
+      .buttons {
+        display: flex;
+        justify-content: flex-start;
+      }
+
+      .button {
+        padding: 10px 20px;
+        background-color: #198459;
+        color: #fff;
+        text-align: center;
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+      }
+
+      .button:hover {
+        background-color: #0e6f48;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="centered-div">
+        <div class="header">
+          {% block branding %}
+            {% load static %}
+            <img src="{% static 'ces_obrigado.png' %}" alt="Imagem CES" />
+          {% endblock %}
+          <div>
+            <div class="title">Agradecemos pelo seu comentário</div>
+            <div class="subtitle">
+              Ela é muito importante para a melhoria do sistema.
+            </div>
+          </div>
+        </div>
+        <div class="buttons">
+          <button class="button" id="closeButton">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  document.getElementById('closeButton').addEventListener('click', function () {
+      window.close();
+  });
+</script>
