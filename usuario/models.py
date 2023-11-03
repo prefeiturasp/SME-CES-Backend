@@ -75,9 +75,9 @@ class Usuario(AbstractUser):
 
 @receiver(post_save, sender=Usuario)
 def apos_criar_usuario(sender, instance, created, **kwargs):
-    if instance.sistema is not None:
+    if instance.sistema is not None and instance.is_staff:
         instance.set_usuario_sistema()
-    elif instance.coordenadoria is not None:
+    elif instance.coordenadoria is not None and instance.is_staff:
         instance.set_usuario_coordenador()
     if created:
         if instance.is_staff and instance.email:

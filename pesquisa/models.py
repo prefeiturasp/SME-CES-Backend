@@ -171,7 +171,7 @@ class Resposta(ModeloBase):
 
     token = models.OneToOneField('Token', on_delete=models.PROTECT,
                                  blank=True, null=True)
-    nota = models.PositiveIntegerField('Nota', blank=False, null=False, default=0)
+    nota = models.PositiveIntegerField('Nota', blank=False, null=False)
     comentario = models.TextField('Comentário', blank=True, null=True)
 
     class Meta:

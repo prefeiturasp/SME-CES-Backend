@@ -42,10 +42,10 @@ def gerar_csv(relatorio):
         if relatorio.pesquisa:
             pesquisas = Pesquisa.objects.filter(id=relatorio.pesquisa.id)
             filename = "relatorio_por_pesquisa.csv"
-        if relatorio.sistema:
+        elif relatorio.sistema:
             pesquisas = Pesquisa.objects.filter(acao__sistema=relatorio.sistema)
             filename = "relatorio_por_sistema.csv"
-        if relatorio.coordenadoria:
+        else:
             pesquisas = Pesquisa.objects.filter(acao__sistema__coordenadoria=relatorio.coordenadoria)
             filename = "relatorio_por_coordenadoria.csv"
 

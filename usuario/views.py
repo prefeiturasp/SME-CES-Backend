@@ -32,4 +32,4 @@ class UsuariosView(viewsets.ModelViewSet):
             usuario.set_usuario_participante()
             return Response(status=status.HTTP_201_CREATED)
         except IntegrityError:
-            return Response({'erro': 'Usuário já existe.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensagem': 'Usuário já cadastrado'}, status=status.HTTP_200_OK)

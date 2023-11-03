@@ -6,7 +6,7 @@ from rangefilter.filters import DateRangeFilter
 from import_export import fields
 from import_export.admin import ImportExportModelAdmin
 
-from .models import Pesquisa, Token
+from .models import Pesquisa, Token, Resposta
 from core.models import Acao
 
 
@@ -49,6 +49,12 @@ class PesquisaAdmin(admin.ModelAdmin):
                 kwargs["queryset"] = Acao.objects.filter(sistema=user.sistema)
 
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+
+class RespostaInline(admin.TabularInline):
+    extra = 0
+    model = Resposta
+    readonly_fields = ('uuid', 'nota', 'comentario', )
 
 
 class TokenResource(resources.ModelResource):
@@ -107,27 +113,20 @@ class TokenAdmin(ImportExportModelAdmin):
     model = Token
     list_display = ('uuid', 'usuario', 'pesquisa', 'respondida', 'respondida_em', 'criado_em', 'alterado_em', )
     raw_id_fields = ('usuario', 'pesquisa', )
-    readonly_fields = ('pulos', 'uuid', 'id', 'criado_em', 'alterado_em', 'uuid_resposta', 'nota_resposta', 'comentario_resposta',)
+    readonly_fields = ('pulos', 'uuid', 'id', 'criado_em', 'alterado_em', )
     list_filter = (
         ('pesquisa__acao__sistema__coordenadoria__nome', DropdownFilter),
         ('pesquisa__acao__sistema__nome', DropdownFilter),
         ('criado_em', DateRangeFilter),
     )
 
+    inlines = [RespostaInline]
+
     def respondida(self, obj):
         return 'Sim' if obj.respondida else 'Não'
 
     def respondida_em(self, obj):
         return obj.resposta.criado_em
-
-    def uuid_resposta(self, obj):
-        return obj.resposta.uuid
-
-    def nota_resposta(self, obj):
-        return obj.resposta.nota
-
-    def comentario_resposta(self, obj):
-        return obj.resposta.comentario
 
     def get_queryset(self, request):
         user = request.user
