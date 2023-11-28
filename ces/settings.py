@@ -207,7 +207,7 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
 EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=False)
 EMAIL_USE_SSL = env.bool('EMAIL_USE_SSL', default=False)
 
-DEFAULT_FROM_EMAIL = EMAIL_HOST
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 ADMIN_URL = env('ADMIN_URL')
@@ -216,6 +216,7 @@ ADMIN_URL = env('ADMIN_URL')
 ADMIN_REORDER = (
     {'app': 'usuario', 'models': ('usuario.Usuario', 'auth.Group')},
     {'app': 'core', 'models': ('core.Coordenadoria', 'core.Sistema', 'core.Acao')},
-    {'app': 'pesquisa', 'models': ('pesquisa.Pesquisa', 'pesquisa.Token', 'relatorio.Relatorio')},
+    {'app': 'pesquisa', 'models': ('pesquisa.Pesquisa',)},
+    {'app': 'pesquisa', 'label': 'Respostas', 'models': ('pesquisa.Token', 'relatorio.Relatorio')},
     {'app': 'auditlog', 'label': 'Logs'},
 )
