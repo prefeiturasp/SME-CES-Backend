@@ -1,4 +1,5 @@
 import datetime
+from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.db.models import Q
@@ -28,10 +29,8 @@ class BuscarPesquisaService:
         try:
             pesquisa = Pesquisa.objects.get(
                 (
-                    (Q(periodo_inicio__isnull=True) &
-                     Q(periodo_fim__isnull=True)) |
-                    (Q(periodo_inicio__gte=datetime.datetime.now()) &
-                     Q(periodo_fim__lte=datetime.datetime.now()))
+                    (Q(periodo_inicio__isnull=True) & Q(periodo_fim__isnull=True)) |
+                    (Q(periodo_inicio__lte=timezone.now()) & Q(periodo_fim__gte=timezone.now()))
                 ),
                 ativa=True,
                 acao__sistema=self.usuario.sistema,
