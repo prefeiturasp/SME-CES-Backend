@@ -216,6 +216,7 @@ ADMIN_URL = env('ADMIN_URL')
 ADMIN_REORDER = (
     {'app': 'usuario', 'models': ('usuario.Usuario', 'auth.Group')},
     {'app': 'core', 'models': ('core.Coordenadoria', 'core.Sistema', 'core.Acao')},
-    {'app': 'pesquisa', 'models': ('pesquisa.Pesquisa', 'pesquisa.Token', 'relatorio.Relatorio')},
+    {'app': 'pesquisa', 'models': ('pesquisa.Pesquisa',)},
+    {'app': 'pesquisa', 'label': 'Respostas', 'models': ('pesquisa.Token', 'relatorio.Relatorio')},
     {'app': 'auditlog', 'label': 'Logs'},
 )
