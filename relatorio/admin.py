@@ -8,7 +8,7 @@ from pesquisa.models import Pesquisa
 @admin.register(Relatorio)
 class RelatorioAdmin(admin.ModelAdmin):
     model = Relatorio
-    list_display = ('id', 'coordenadoria', 'sistema', 'pesquisa', 'criado_em', 'criado_por')
+    list_display = ('id', 'coordenadoria', 'sistema', 'pesquisa', 'arquivo', 'criado_em', 'criado_por')
     readonly_fields = ('uuid', 'id', 'criado_em', 'criado_por',)
 
     def sistema(self, obj):
