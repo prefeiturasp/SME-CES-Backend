@@ -10,7 +10,7 @@ from auditlog.models import AuditlogHistoryField
 from auditlog.registry import auditlog
 
 from comum.models import ModeloBase
-from .services.relatorio_medias import gerar_csv
+from .services.relatorio_service import gerar_csv
 
 logger = logging.getLogger(__name__)
 

@@ -3,13 +3,27 @@ from django.db.models import Q
 from .models import Relatorio
 from core.models import Coordenadoria, Sistema
 from pesquisa.models import Pesquisa
+from .services.relatorio_service import gerar_csv
+from django_admin_listfilter_dropdown.filters import DropdownFilter, RelatedDropdownFilter, ChoiceDropdownFilter
+from django.contrib import admin
 
-
+def gerar_relatorio(modeladmin, request, queryset):
+    for item in queryset:
+        gerar_csv(item)
 @admin.register(Relatorio)
 class RelatorioAdmin(admin.ModelAdmin):
     model = Relatorio
-    list_display = ('id', 'coordenadoria', 'sistema', 'pesquisa', 'arquivo', 'criado_em', 'criado_por')
+    list_display = ('id', 'coordenadoria', 'sistema', 'pesquisa', 'arquivo', 'criado_em', 'alterado_em', 'criado_por')
     readonly_fields = ('uuid', 'id', 'criado_em', 'criado_por',)
+    list_filter = (
+        ('coordenadoria__nome', DropdownFilter),
+        ('sistema__nome', DropdownFilter),
+        ('pesquisa__acao__nome', DropdownFilter),
+    )
+
+    actions = [
+        gerar_relatorio,
+    ]
 
     def sistema(self, obj):
         return obj.pesquisa.acao.sistema.nome
