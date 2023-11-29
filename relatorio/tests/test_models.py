@@ -5,7 +5,7 @@ from core.models import Coordenadoria, Sistema, Acao
 from pesquisa.models import Pesquisa, Resposta
 from ..models import Relatorio
 from usuario.models import Usuario
-from ..services.relatorio_medias import get_infos, gerar_csv
+from ..services.relatorio_service import get_infos, gerar_csv
 
 
 @pytest.fixture

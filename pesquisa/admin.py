@@ -106,7 +106,6 @@ class TokenResource(resources.ModelResource):
         except Exception:
             return '-'
 
-
 @admin.register(Token)
 class TokenAdmin(ImportExportModelAdmin):
     resource_class = TokenResource
@@ -117,7 +116,8 @@ class TokenAdmin(ImportExportModelAdmin):
     list_filter = (
         ('pesquisa__acao__sistema__coordenadoria__nome', DropdownFilter),
         ('pesquisa__acao__sistema__nome', DropdownFilter),
-        ('criado_em', DateRangeFilter),
+        ('pesquisa__acao__nome', DropdownFilter),
+        ('criado_em', DateRangeFilter)
     )
 
     inlines = [RespostaInline]

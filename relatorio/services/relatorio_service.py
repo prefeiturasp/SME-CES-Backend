@@ -1,10 +1,10 @@
+import logging
 import csv
 from django.db.models import Sum
 from tempfile import NamedTemporaryFile
 from pesquisa.models import Pesquisa
 from usuario.models import Usuario
-from usuario.services import AuthService
-
+logger = logging.getLogger(__name__)
 
 def get_infos(relatorio, pesquisa):
     media = 0
@@ -20,8 +20,9 @@ def get_infos(relatorio, pesquisa):
         total_ocorrencias += tokens_com_resposta.filter(resposta__nota=peso).count() * peso
 
     try:
-        media = total_ocorrencias/tokens_com_resposta.count()
-    except Exception:
+        media = round(total_ocorrencias/tokens_com_resposta.count(), 2)
+    except Exception as error:
+        logger.error('get_infos: %r', error)
         media = 0
 
     qnt_respostas = tokens_com_resposta.count()
